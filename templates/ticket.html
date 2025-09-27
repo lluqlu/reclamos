@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="bg-white p-6 rounded-2xl shadow">
+<div class="flex items-center justify-between mb-4">
+<h2 class="text-xl font-semibold">Ticket generado</h2>
+<div class="text-sm text-slate-500">{{ ts_local }}</div>
+</div>
+
+
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+<div class="space-y-1">
+<div><span class="font-semibold">Nº Reclamo:</span> {{ reclamo_id }}</div>
+<div><span class="font-semibold">Agente:</span> {{ agente }}</div>
+<div><span class="font-semibold">Fecha:</span> {{ fecha }}</div>
+<div><span class="font-semibold">Hora:</span> {{ hora }}</div>
+</div>
+<div class="space-y-1">
+<div><span class="font-semibold">Cliente:</span> {{ numero_cliente }} – {{ cliente.nombre }} {{ cliente.apellido }}</div>
+<div><span class="font-semibold">Dirección:</span> {{ cliente.direccion }}</div>
+<div><span class="font-semibold">Medidor:</span> {{ cliente.medidor }}</div>
+</div>
+</div>
+
+
+<hr class="my-4" />
+
+
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+<div><span class="font-semibold">Tipo de problema:</span> {{ tipo }}</div>
+{% if otro_detalle %}<div><span class="font-semibold">Otro:</span> {{ otro_detalle }}</div>{% endif %}
+</div>
+
+
+{% if comentarios %}
+<div class="mt-2 text-sm"><span class="font-semibold">Comentarios:</span> {{ comentarios }}</div>
+{% endif %}
+
+
+<div class="flex items-center gap-3 mt-6">
+<a href="{{ url_for('reclamos.zpl', reclamo_id=reclamo_id) }}" class="px-4 py-2 rounded-xl border">Imprimir Reclamo</a>
+<a href="{{ url_for('reclamos.index') }}" class="px-4 py-2 rounded-xl bg-slate-800 text-white">Cargar otro</a>
+</div>
+</div>
+{% endblock %}

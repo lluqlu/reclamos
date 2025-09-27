@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>{{ title or 'Reclamos' }}</title>
+<script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-50 min-h-screen">
+<div class="max-w-5xl mx-auto p-6">
+<header class="mb-6">
+<h1 class="text-3xl font-bold text-slate-800">Sistema de Reclamos</h1>
+<p class="text-slate-500">Demo v2.0</p>
+</header>
+{% block content %}{% endblock %}
+<footer class="mt-10 text-center text-xs text-slate-400">© 2025 Lautaro Luque Lusi</footer>
+</div>
+</body>
+</html>

@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+  <form action="{{ url_for('reclamos.generar') }}" method="POST" class="lg:col-span-2 bg-white p-6 rounded-2xl shadow">
+    <h2 class="text-xl font-semibold mb-4">Alta de Reclamo</h2>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div>
+        <label class="block text-sm text-slate-600 mb-1">Agente (quien recibe)</label>
+        <input required type="text" name="agente" class="w-full rounded-xl border-slate-300 focus:border-sky-400 focus:ring-sky-200" placeholder="Nombre y apellido" />
+      </div>
+      <div>
+        <label class="block text-sm text-slate-600 mb-1">Nº de Cliente</label>
+        <input required type="text" name="numero_cliente" id="numero_cliente" class="w-full rounded-xl border-slate-300 focus:border-sky-400 focus:ring-sky-200" placeholder="p.ej. 1001" />
+      </div>
+      <div>
+        <label class="block text-sm text-slate-600 mb-1">Nombre</label>
+        <input type="text" id="nombre" readonly class="w-full rounded-xl border-slate-200 bg-slate-100" />
+      </div>
+      <div>
+        <label class="block text-sm text-slate-600 mb-1">Apellido</label>
+        <input type="text" id="apellido" readonly class="w-full rounded-xl border-slate-200 bg-slate-100" />
+      </div>
+      <div class="md:col-span-2">
+        <label class="block text-sm text-slate-600 mb-1">Dirección</label>
+        <input type="text" id="direccion" readonly class="w-full rounded-xl border-slate-200 bg-slate-100" />
+      </div>
+      <div>
+        <label class="block text-sm text-slate-600 mb-1">Nº de Medidor</label>
+        <input type="text" id="medidor" readonly class="w-full rounded-xl border-slate-200 bg-slate-100" />
+      </div>
+      <div>
+        <label class="block text-sm text-slate-600 mb-1">Tipo de problema</label>
+        <select name="tipo" id="tipo" class="w-full rounded-xl border-slate-300 focus:border-sky-400 focus:ring-sky-200">
+          <option value="Baja tensión">Baja tensión</option>
+          <option value="Alta tensión">Alta tensión</option>
+          <option value="Sin luz">Sin luz</option>
+          <option value="Otro">Otro</option>
+        </select>
+      </div>
+      <div id="otro_wrapper" class="hidden">
+        <label class="block text-sm text-slate-600 mb-1">Especifique otro problema</label>
+        <input type="text" name="otro_detalle" id="otro_detalle" class="w-full rounded-xl border-slate-300 focus:border-sky-400 focus:ring-sky-200" placeholder="Describa el tipo de problema" />
+      </div>
+      <div class="md:col-span-2">
+        <label class="block text-sm text-slate-600 mb-1">Comentarios / Detalles del domicilio</label>
+        <textarea name="comentarios" rows="4" class="w-full rounded-xl border-slate-300 focus:border-sky-400 focus:ring-sky-200" placeholder="Descripción detallada, referencias, entre calles, etc."></textarea>
+      </div>
+    </div>
+
+    <div class="flex items-center justify-end gap-3 mt-6">
+      <button type="reset" class="px-4 py-2 rounded-xl border text-slate-600">Limpiar</button>
+      <button type="submit" class="px-5 py-2.5 rounded-xl bg-sky-600 text-white shadow hover:bg-sky-700">Generar ticket</button>
+    </div>
+  </form>
+
+  <aside class="bg-white p-6 rounded-2xl shadow h-max">
+    <h3 class="font-semibold mb-2">Ayuda</h3>
+    <ul class="text-sm text-slate-600 list-disc pl-5 space-y-1">
+      <li>Ingresá el Nº de cliente para autocompletar los datos (demo).</li>
+      <li>Si el tipo es <em>Otro</em>, detallalo en el campo adicional.</li>
+      <li>El número de reclamo y la hora se generan automáticamente.</li>
+    </ul>
+    <div class="mt-4 text-xs text-slate-500">Clientes demo: 1001, 1002, 1003, 2001.</div>
+  </aside>
+</div>
+
+<script>
+  (function () {
+    const numeroCliente = document.getElementById('numero_cliente');
+    const otroWrapper   = document.getElementById('otro_wrapper');
+    const tipoSel       = document.getElementById('tipo');
+
+    function toggleOtro() {
+      if (tipoSel.value === 'Otro') {
+        otroWrapper.classList.remove('hidden');
+      } else {
+        otroWrapper.classList.add('hidden');
+        const od = document.getElementById('otro_detalle');
+        if (od) od.value = '';
+      }
+    }
+    tipoSel.addEventListener('change', toggleOtro);
+    toggleOtro();
+
+    const buscarClienteUrl = "{{ url_for('reclamos.buscar_cliente') }}";
+
+    async function fetchCliente(nro) {
+      if (!nro) return;
+      try {
+        const res  = await fetch(buscarClienteUrl + '?n=' + encodeURIComponent(nro));
+        const data = await res.json();
+        document.getElementById('nombre').value    = data.nombre || '';
+        document.getElementById('apellido').value  = data.apellido || '';
+        document.getElementById('direccion').value = data.direccion || '';
+        document.getElementById('medidor').value   = data.medidor || '';
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    numeroCliente.addEventListener('change', (e) => fetchCliente(e.target.value.trim()));
+    numeroCliente.addEventListener('blur',   (e) => fetchCliente(e.target.value.trim()));
+  })();
+</script>
+{% endblock %}
+
